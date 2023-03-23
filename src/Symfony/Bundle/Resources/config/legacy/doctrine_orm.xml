@@ -61,6 +61,11 @@
         </service>
         <service id="ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter" alias="api_platform.doctrine.orm.search_filter" />
 
+        <service id="api_platform.doctrine.orm.cache.query_expander" class="ApiPlatform\Core\Bridge\Doctrine\Orm\Cache\QueryExpander" public="false">
+            <argument type="service" id="api_platform.metadata.resource.metadata_collection_factory.retro_compatible" />
+        </service>
+        <service id="ApiPlatform\Core\Bridge\Doctrine\Orm\Cache\QueryExpander" alias="api_platform.doctrine.orm.cache.query_expander" />
+
         <!-- Filter -->
 
         <service id="api_platform.doctrine.orm.search_filter" class="ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter" public="false" abstract="true">
@@ -162,10 +167,19 @@
         </service>
         <service id="ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\FilterEagerLoadingExtension" alias="api_platform.doctrine.orm.query_extension.filter_eager_loading" />
 
+        <service id="api_platform.doctrine.orm.query_extension.cache" class="ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCacheExtension" public="false">
+            <argument type="service" id="api_platform.doctrine.orm.cache.query_expander" />
+
+            <tag name="api_platform.doctrine.orm.query_extension.collection" priority="-65" />
+            <tag name="api_platform.doctrine.orm.query_extension.item" priority="-65" />
+        </service>
+        <service id="ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCacheExtension" alias="api_platform.doctrine.orm.query_extension.cache" />
+
         <service id="api_platform.doctrine.orm.query_extension.pagination" class="ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension" public="false">
             <argument type="service" id="doctrine" />
             <argument type="service" id="api_platform.metadata.resource.metadata_factory" />
             <argument type="service" id="api_platform.pagination" />
+            <argument type="service" id="api_platform.doctrine.orm.cache.query_expander" />
 
             <tag name="api_platform.doctrine.orm.query_extension.collection" priority="-64" />
         </service>
